@@ -1,260 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<title>Seller Table + Label Preview</title>
-<script src="./js/vue.global.prod.js"></script>
-<script src="./js/bwip-js-min.js"></script>
-<style>
-  body {
-    font-family: sans-serif;
-    padding: 1rem;
-    max-width: 1200px;
-    margin: auto;
-  }
-  h1, h2 { margin-top: 1rem; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-  }
-  th, td { border: 1px solid #ccc; padding: 6px; }
-  input, select { width: 100%; box-sizing: border-box; }
-  button { margin: 5px 5px 5px 0; }
-  .controls { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
-  .controls > div { flex: 1; min-width: 200px; }
-
-  /* Labels */
-  .label-sheet {
-    display: flex;
-    flex-wrap: wrap;
-    width: 8.5in;
-    min-height: 11in;
-    box-sizing: border-box;
-  }
-  .label {
-    box-sizing: border-box;
-    border: 2px dotted black;
-    width: 2.4375in;
-    height: 4.5in;
-    margin: 0.1in;
-    padding: 0.3in 0.4in;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .label-header { font-weight: bold; font-size: 1rem; text-align: center; margin-bottom: 0.25rem; }
-  .line { display: flex; justify-content: space-around; margin-bottom: 0.25rem; font-size: 1.25rem; }
-  .crossed { position: relative; color: black; }
-  .crossed::after {
-    content: "X";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    font-size: 1.25em; font-weight: bold; color: red;
-    display: flex; align-items: center; justify-content: center;
-    pointer-events: none;
-  }
-  .circled {
-    border: 2px solid black;
-    border-radius: 50%;
-    padding: 0 6px;
-    line-height: 1;
-  }
-  .item-desc { font-style: italic; font-size: 1rem; text-align: center; min-height: 1.5rem; }
-  .size { text-align: center; font-size: 1rem; margin-top: 0.5rem; }
-  .barcode { margin-top: 0.5rem; display: flex; justify-content: center; }
-  .price-seller { font-weight: bold; overflow: hidden; margin-top: 0.3rem; }
-  .price-seller span { display: inline-block; width: 50%; }
-  .price-seller .left { float: left; }
-  .price-seller .right { float: right; text-align: right; }
-
-  @media print {
-    h2, #edit-data, button { display: none; }
-    .label:nth-of-type(6n) { page-break-after: always; }
-  }
-
-  /* Web view 3 per row */
-  @media screen {
-    .label-sheet { justify-content: flex-start; }
-    .label { width: calc((100% / 3) - 0.25in); }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Seller Table + Label Preview</title>
+  <script src="./js/vue.global.prod.js"></script>
+  <script src="./js/bwip-js-min.js"></script>
+  <link rel="stylesheet" href="./style/index.css">
+  </link>
+  <link rel="stylesheet" href="./style/print.css">
+  </link>
+  <link rel="stylesheet" href="./style/index.css">
+  </link>
 </head>
+
 <body>
-<div id="app">
-  <div id="edit-data">
-    <h1>Seller Table</h1>
+  <div id="app">
+    <div class="noPrint">
+      <div id="edit-data">
+        <h1>Seller Table</h1>
 
-    <div class="controls">
-      <div>
-        <label>Seller ID: <input v-model="sellerData.sellerId" placeholder="Enter Seller ID" /></label>
+        <div class="controls">
+          <div>
+            <label>Seller ID: <input v-model="sellerData.sellerId" placeholder="Enter Seller ID" /></label>
+          </div>
+          <div>
+            <label>Default Gender:
+              <select v-model="sellerData.defaultGender">
+                <option value="unmarked"> - </option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>Default Donation: <input type="checkbox" v-model="sellerData.defaultDonation" /></label>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Donation</th>
+              <th>Gender</th>
+              <th>Description</th>
+              <th>Size</th>
+              <th>Price (≥ 2)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in sellerData.items" :key="index">
+              <td><input type="checkbox" v-model="item.donation" /></td>
+              <td>
+                <select v-model="item.gender">
+                  <option value="unmarked"> - </option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </td>
+              <td><input v-model="item.itemDescription" /></td>
+              <td><input v-model="item.size" /></td>
+              <td><input type="number" v-model.number="item.price" min="2" @input="validatePrice(item)" /></td>
+              <td><button @click="removeItem(index)">Remove</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top:1rem;">
+          <button @click="addItem">Add Item</button>
+          <button @click="saveToLocalStorage">💾 Save</button>
+          <button @click="exportAsJSON">⬇ Export JSON</button>
+          <input type="file" @change="importFromJSON" />
+        </div>
+        <h3>Debug Data:</h3>
+        <pre>{{ sellerData }}</pre>
       </div>
-      <div>
-        <label>Default Gender:
-          <select v-model="sellerData.defaultGender">
-            <option value="unmarked"> - </option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>Default Donation: <input type="checkbox" v-model="sellerData.defaultDonation" /></label>
+
+      <h2>Label Preview</h2>
+      <button onclick="window.print()">Print</button>
+    </div>
+    <div class="label-sheet">
+      <div class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
+        <div class="label-line label-header">
+          <img src="./images/header-logo.png" />
+        </div>
+        <div class="label-line line">
+          <span style="width: 33%; border-right: 2px dotted lightgrey;">
+            <span :class="!item.donation ? 'crossed' : ''">D</span>
+          </span>
+          <span style="width: 65%;">
+            <span :class="item.gender==='male'?'circled':''">B</span>
+            <span> / </span>
+            <span :class="item.gender==='female'?'circled':''">G</span>
+          </span>
+        </div>
+        <div class="label-line item-desc">
+          <div style="text-align: right; font-size: 24pt; font-style: italic;">Item</div>{{ item.itemDescription }}
+        </div>
+        <div class="label-line size">{{ item.size }}<span style="font-style: italic;">&nbsp;Size</span></div>
+        <div class="label-line barcode">
+          <div style="font-size: 8pt;">MyWebsite.com</div>
+          <div>
+            <canvas :ref="el=>drawBarcode(el,item)"></canvas>
+          </div>
+          <div class="price-seller">
+            <span class="left">{{ sellerData.sellerId }}</span>
+            <span class="right">${{ item.price.toFixed(2) }}</span>
+          </div>
+        </div>
       </div>
     </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Donation</th><th>Gender</th><th>Description</th><th>Size</th><th>Price (≥ 2)</th><th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in sellerData.items" :key="index">
-          <td><input type="checkbox" v-model="item.donation" /></td>
-          <td>
-            <select v-model="item.gender">
-              <option value="unmarked"> - </option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </td>
-          <td><input v-model="item.itemDescription" /></td>
-          <td><input v-model="item.size" /></td>
-          <td><input type="number" v-model.number="item.price" min="2" @input="validatePrice(item)" /></td>
-          <td><button @click="removeItem(index)">Remove</button></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div style="margin-top:1rem;">
-      <button @click="addItem">Add Item</button>
-      <button @click="saveToLocalStorage">💾 Save</button>
-      <button @click="exportAsJSON">⬇ Export JSON</button>
-      <input type="file" @change="importFromJSON" />
-    </div>
-    <h3>Debug Data:</h3>
-    <pre>{{ sellerData }}</pre>
   </div>
-
-  <h2>Label Preview</h2>
-  <button onclick="window.print()">Print</button>
-
-  <div class="label-sheet">
-    <div class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
-      <div class="label-header">Cosignment Sale</div>
-      <div class="line">
-        <span :class="!item.donation ? 'crossed' : ''">D</span>
-        <span :class="item.gender==='male'?'circled':''">B</span>
-        <span :class="item.gender==='female'?'circled':''">G</span>
-      </div>
-      <div class="item-desc">{{ item.itemDescription }}</div>
-      <div class="size">{{ item.size }}</div>
-      <div class="barcode"><canvas :ref="el=>drawBarcode(el,item)"></canvas></div>
-      <div class="price-seller">
-        <span class="left">{{ sellerData.sellerId }}</span>
-        <span class="right">${{ item.price.toFixed(2) }}</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-const { createApp, reactive, onMounted, watch } = Vue;
-
-createApp({
-  setup() {
-    const LOCAL_KEY = 'seller-data';
-    const sellerData = reactive({
-      sellerId: '',
-      defaultDonation: false,
-      defaultGender: 'unmarked',
-      items: []
-    });
-
-    function addItem() {
-      sellerData.items.push({
-        donation: sellerData.defaultDonation,
-        gender: sellerData.defaultGender,
-        itemDescription: '',
-        size: '',
-        price: 2
-      });
-    }
-
-    function removeItem(index) {
-      sellerData.items.splice(index,1);
-    }
-
-    function validatePrice(item) {
-      if(item.price<2)item.price=2;
-    }
-
-    function saveToLocalStorage() {
-      localStorage.setItem(LOCAL_KEY,JSON.stringify(sellerData));
-    }
-
-    function exportAsJSON() {
-      const dataStr=JSON.stringify(sellerData,null,2);
-      const blob=new Blob([dataStr],{type:'application/json'});
-      const url=URL.createObjectURL(blob);
-      const link=document.createElement('a');
-      link.href=url;
-      link.download='seller-data.json';
-      link.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function importFromJSON(event){
-      const file=event.target.files[0];
-      if(!file)return;
-      const reader=new FileReader();
-      reader.onload=(e)=>{
-        try{
-          const imported=JSON.parse(e.target.result);
-          Object.assign(sellerData,imported);
-          if(!sellerData.items.length)addItem();
-        }catch(err){
-          alert('Invalid JSON file');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function drawBarcode(canvas,item){
-      if(!canvas)return;
-      const code=`${sellerData.sellerId}$${item.price.toFixed(2)}`;
-      try{
-        bwipjs.toCanvas(canvas,{
-          bcid:'code93',
-          text:code,
-          scale:1.5,
-          height:20,
-          includetext:false,
-          includecheck: true
-        });
-      }catch(e){
-        console.error('Barcode error',e);
-      }
-    }
-
-    onMounted(()=>{
-      const stored=localStorage.getItem(LOCAL_KEY);
-      if(stored){
-        try{
-          Object.assign(sellerData,JSON.parse(stored));
-          if(!sellerData.items.length)addItem();
-        }catch{
-          addItem();
-        }
-      }else addItem();
-    });
-
-    watch(()=>sellerData,saveToLocalStorage,{deep:true});
-
-    return { sellerData, addItem, removeItem, validatePrice, saveToLocalStorage, exportAsJSON, importFromJSON, drawBarcode };
-  }
-}).mount('#app');
-</script>
+  <script type="text/javascript" src="./js/app.js"></script>
 </body>
+
 </html>

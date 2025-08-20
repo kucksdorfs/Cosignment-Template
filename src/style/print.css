@@ -1,0 +1,14 @@
+@media print {
+.noPrint {
+    display: none;
+}
+    /* h2,
+    #edit-data,
+    button {
+        display: none;
+    } */
+
+    .label:nth-of-type(6n) {
+        page-break-after: always;
+    }
+}
