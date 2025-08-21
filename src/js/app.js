@@ -1,11 +1,11 @@
 (function (sk) {
     const { createApp, reactive, onMounted, watch } = Vue;
-    sk.toggleDebug = function() {
+    sk.toggleDebug = function () {
         document.querySelector("#debugData").classList.toggle("hide");
     }
 
     createApp({
-        setup: function() {
+        setup: function () {
             const LOCAL_KEY = 'seller-data';
             const MINIMUM_PRICE = 2;
             const sellerData = reactive({
@@ -43,22 +43,41 @@
                     alert("You have no tags to print.");
                     return;
                 }
-                
+
                 if (confirm(`You are about to print ${itemCount} tags for seller ID ${sellerId}. Do you want to continue?`)) {
                     window.print();
                 }
             }
 
             function validatePrice(item) {
-                var newPrice = item.price;
-                if (!Number.isInteger(newPrice)) {
-                    item.price = MINIMUM_PRICE;
+                let corrected = false;
+                let newPrice = Number(item.price);
+
+                if (isNaN(newPrice) || newPrice < MINIMUM_PRICE) {
+                    newPrice = MINIMUM_PRICE;
+                    corrected = true;
                 }
-                
-                if (item.price < MINIMUM_PRICE) {
-                    item.price = MINIMUM_PRICE;
+
+                if (!Number.isInteger(newPrice)) {
+                    newPrice = Math.round(newPrice);
+                    corrected = true;
+                }
+
+                item.price = newPrice;
+
+                if (corrected) {
+                    // restart animation
+                    item.highlight = false;
+                    void item; // force reactivity
+                    item.highlight = true;
+
+                    // remove highlight after full animation
+                    setTimeout(() => {
+                        item.highlight = false;
+                    }, 5000); // matches total animation duration
                 }
             }
+
 
             function saveToLocalStorage() {
                 localStorage.setItem(LOCAL_KEY, JSON.stringify(sellerData));
@@ -92,8 +111,9 @@
             }
 
             function drawBarcode(canvas, item) {
-                if (!canvas) return;
-                const code = `${sellerData.sellerId}$${item.price?.toFixed(2)}`;
+                if (!canvas)
+                    return;
+                const code = `${sellerData.sellerId}$${Number(item?.price || 0).toFixed(2)}`;
                 try {
                     bwipjs.toCanvas(canvas, {
                         bcid: 'code93ext',
@@ -112,7 +132,15 @@
                 const stored = localStorage.getItem(LOCAL_KEY);
                 if (stored) {
                     try {
-                        Object.assign(sellerData, JSON.parse(stored));
+                        const parsed = JSON.parse(stored);
+
+                        // Remove temporary highlight flags
+                        if (parsed.items && Array.isArray(parsed.items)) {
+                            parsed.items.forEach(item => delete item.highlight);
+                        }
+
+                        Object.assign(sellerData, parsed);
+
                         if (!sellerData.items.length) addItem();
                     } catch {
                         addItem();

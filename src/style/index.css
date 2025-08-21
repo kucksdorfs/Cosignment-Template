@@ -26,6 +26,7 @@ input,
 select {
     width: 100%;
     box-sizing: border-box;
+    transition: none;
 }
 
 button {
@@ -151,6 +152,15 @@ button {
 .price-seller span {
     display: inline-block;
     width: 50%;
+}
+
+@keyframes highlight-hold-fade {
+  0%, 60% { background-color: rgba(255,0,0,0.5); } /* first 3s red */
+  100% { background-color: white; } /* fade to white over remaining 2s */
+}
+
+.invalid-highlight {
+  animation: highlight-hold-fade 5s forwards; /* total 5s = 3s hold + 2s fade */
 }
 
 /* Web view 3 per row */
