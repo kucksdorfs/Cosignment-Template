@@ -35,8 +35,9 @@
         <table>
           <thead>
             <tr>
-              <th>Donation<br />
-                <label>Default Donation: <input type="checkbox" v-model="sellerData.defaultDonation" /></label>
+              <th>Donate?<br />
+                <label>Default Donation: <input title="Check to donate if the item doesn't sell." type="checkbox"
+                    v-model="sellerData.defaultDonation" /></label>
               </th>
               <th>Gender<br /><label>Default Gender:
                   <select v-model="sellerData.defaultGender">
@@ -49,12 +50,15 @@
               <th>Description</th>
               <th>Size</th>
               <th>Price (≥ 2)</th>
-              <th>Actions</th>
+              <th>Remove<br />
+                <button @click="clearAllItems">Clear</button>
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in sellerData.items" :key="index">
-              <td><input type="checkbox" v-model="item.donation" /></td>
+              <td><input title="Check to donate if the item doesn't sell." type="checkbox" v-model="item.donation" />
+              </td>
               <td>
                 <select v-model="item.gender">
                   <option value="unmarked"> - </option>
@@ -73,16 +77,15 @@
           </tbody>
         </table>
 
-        <div style="margin-top:1rem;">
+        <div style="margin-top: 1rem;">
           <button @click="addItem">Add Item</button>
-          <button @click="saveToLocalStorage">💾 Save</button>
-          <button @click="exportAsJSON">⬇ Export JSON</button>
+          <button @click="exportAsJSON">⬇ Download tag file</button>
           <input type="file" @change="importFromJSON" />
         </div>
       </div>
 
       <h2>Label Preview</h2>
-      <button @click="print">Print</button>
+      <button @click="print">🖨️ Print</button>
     </div>
     <div class="label-sheet">
       <div class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
@@ -122,7 +125,7 @@
     </div>
   </div>
   <script type="text/javascript" src="./js/app.js"></script>
-  <footer>
+  <footer class="noPrint">
     &copy; 2025 Kucksdorfs. Licensed under the
     <a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank">BSD 3-Clause License</a>.
   </footer>

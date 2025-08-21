@@ -69,7 +69,6 @@ button {
     display: flex;
     flex-wrap: wrap;
     width: 8.5in;
-    min-height: 11in;
     box-sizing: border-box;
 }
 

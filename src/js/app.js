@@ -4,7 +4,18 @@
         document.querySelector("#debugData").classList.toggle("hide");
     }
 
-    createApp({
+    document.addEventListener('keydown', (e) => {
+        // Check for Ctrl+P (Windows/Linux) or Cmd+P (Mac)
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+            e.preventDefault();  // stop the default print dialog
+            instance.print();
+            //alert("Custom print handler here!");
+            // You can call your own print function, e.g., window.print() or something custom
+        }
+    });
+
+
+    let instance = createApp({
         setup: function () {
             const LOCAL_KEY = 'seller-data';
             const MINIMUM_PRICE = 2;
@@ -94,6 +105,12 @@
                 URL.revokeObjectURL(url);
             }
 
+            function clearAllItems() {
+                sellerData.items.splice(0, sellerData.items.length);
+                addItem(); // optional: add a new empty row
+            }
+
+
             function importFromJSON(event) {
                 const file = event.target.files[0];
                 if (!file) return;
@@ -150,7 +167,7 @@
 
             watch(() => sellerData, saveToLocalStorage, { deep: true });
 
-            return { sellerData, addItem, removeItem, print, validatePrice, saveToLocalStorage, exportAsJSON, importFromJSON, drawBarcode };
+            return { sellerData, addItem, removeItem, clearAllItems, print, validatePrice, exportAsJSON, importFromJSON, drawBarcode };
         }
     }).mount('#app');
 })(window.sk = window.sk || {});
