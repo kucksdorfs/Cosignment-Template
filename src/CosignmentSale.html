@@ -14,6 +14,10 @@
 <body>
   <div id="app">
     <div class="noPrint">
+      <a style="position: fixed; right: 0px; top: 0px;" href="https://github.com/kucksdorfs"><img loading="lazy"
+          decoding="async" width="149" height="149"
+          src="https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png"
+          class="attachment-full size-full" alt="Fork me on GitHub"></a>
       <div id="edit-data">
         <h1>Seller Table</h1>
         <div class="controls">
@@ -58,7 +62,10 @@
               </td>
               <td><input v-model="item.itemDescription" /></td>
               <td><input v-model="item.size" /></td>
-              <td><input type="number" v-model.number="item.price" min="2" @change="validatePrice(item)" /></td>
+              <td>
+                <input type="number" v-model.number="item.price" min="2" @change="validatePrice(item)"
+                  :class="{ 'invalid-highlight': item.highlight }" />
+              </td>
               <td><button @click="removeItem(index)">Remove</button></td>
             </tr>
           </tbody>
@@ -113,6 +120,11 @@
     </div>
   </div>
   <script type="text/javascript" src="./js/app.js"></script>
+  <footer>
+    &copy; 2025 Kucksdorfs. Licensed under the
+    <a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank">BSD 3-Clause License</a>.
+  </footer>
+
 </body>
 
 </html>
