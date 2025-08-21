@@ -1,9 +1,13 @@
-(function () {
+(function (sk) {
     const { createApp, reactive, onMounted, watch } = Vue;
+    sk.toggleDebug = function() {
+        document.querySelector("#debugData").classList.toggle("hide");
+    }
 
     createApp({
-        setup() {
+        setup: function() {
             const LOCAL_KEY = 'seller-data';
+            const MINIMUM_PRICE = 2;
             const sellerData = reactive({
                 sellerId: '',
                 defaultDonation: false,
@@ -17,7 +21,7 @@
                     gender: sellerData.defaultGender,
                     itemDescription: '',
                     size: '',
-                    price: 2
+                    price: MINIMUM_PRICE
                 });
             }
 
@@ -25,9 +29,35 @@
                 sellerData.items.splice(index, 1);
             }
 
+            function print() {
+                let sellerId = sellerData.sellerId,
+                    itemCount = sellerData.items.length;
+
+                if (!sellerId) {
+                    alert("Please enter your seller id.");
+                    document.querySelector("#txtSellerId")?.focus();
+                    return;
+                }
+
+                if (itemCount === 0) {
+                    alert("You have no tags to print.");
+                    return;
+                }
+                
+                if (confirm(`You are about to print ${itemCount} tags for seller ID ${sellerId}. Do you want to continue?`)) {
+                    window.print();
+                }
+            }
+
             function validatePrice(item) {
-                if (item.price < 2)
-                    item.price = 2;
+                var newPrice = item.price;
+                if (!Number.isInteger(newPrice)) {
+                    item.price = MINIMUM_PRICE;
+                }
+                
+                if (item.price < MINIMUM_PRICE) {
+                    item.price = MINIMUM_PRICE;
+                }
             }
 
             function saveToLocalStorage() {
@@ -63,7 +93,7 @@
 
             function drawBarcode(canvas, item) {
                 if (!canvas) return;
-                const code = `${sellerData.sellerId}$${item.price.toFixed(2)}`;
+                const code = `${sellerData.sellerId}$${item.price?.toFixed(2)}`;
                 try {
                     bwipjs.toCanvas(canvas, {
                         bcid: 'code93ext',
@@ -92,7 +122,7 @@
 
             watch(() => sellerData, saveToLocalStorage, { deep: true });
 
-            return { sellerData, addItem, removeItem, validatePrice, saveToLocalStorage, exportAsJSON, importFromJSON, drawBarcode };
+            return { sellerData, addItem, removeItem, print, validatePrice, saveToLocalStorage, exportAsJSON, importFromJSON, drawBarcode };
         }
     }).mount('#app');
-})();
+})(window.sk = window.sk || {});

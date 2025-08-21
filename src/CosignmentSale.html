@@ -3,15 +3,12 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Seller Table + Label Preview</title>
+  <title>Sale Tag Generator</title>
   <script src="./js/vue.global.prod.js"></script>
   <script src="./js/bwip-js-min.js"></script>
-  <link rel="stylesheet" href="./style/index.css">
-  </link>
-  <link rel="stylesheet" href="./style/print.css">
-  </link>
-  <link rel="stylesheet" href="./style/index.css">
-  </link>
+  <link rel="stylesheet" href="./style/index.css" />
+  <link rel="stylesheet" href="./style/print.css" />
+  <link rel="stylesheet" href="./style/index.css" />
 </head>
 
 <body>
@@ -19,10 +16,13 @@
     <div class="noPrint">
       <div id="edit-data">
         <h1>Seller Table</h1>
-
         <div class="controls">
           <div>
-            <label>Seller ID: <input v-model="sellerData.sellerId" placeholder="Enter Seller ID" /></label>
+            <label>Seller ID: <input id="txtSellerId" v-model="sellerData.sellerId"
+                placeholder="Enter Seller ID" /></label>
+          </div>
+          <div>
+            <label>Default Donation: <input type="checkbox" v-model="sellerData.defaultDonation" /></label>
           </div>
           <div>
             <label>Default Gender:
@@ -32,9 +32,6 @@
                 <option value="female">Female</option>
               </select>
             </label>
-          </div>
-          <div>
-            <label>Default Donation: <input type="checkbox" v-model="sellerData.defaultDonation" /></label>
           </div>
         </div>
 
@@ -61,7 +58,7 @@
               </td>
               <td><input v-model="item.itemDescription" /></td>
               <td><input v-model="item.size" /></td>
-              <td><input type="number" v-model.number="item.price" min="2" @input="validatePrice(item)" /></td>
+              <td><input type="number" v-model.number="item.price" min="2" @change="validatePrice(item)" /></td>
               <td><button @click="removeItem(index)">Remove</button></td>
             </tr>
           </tbody>
@@ -73,12 +70,10 @@
           <button @click="exportAsJSON">⬇ Export JSON</button>
           <input type="file" @change="importFromJSON" />
         </div>
-        <h3>Debug Data:</h3>
-        <pre>{{ sellerData }}</pre>
       </div>
 
       <h2>Label Preview</h2>
-      <button onclick="window.print()">Print</button>
+      <button @click="print">Print</button>
     </div>
     <div class="label-sheet">
       <div class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
@@ -106,10 +101,15 @@
           </div>
           <div class="price-seller">
             <span class="left">{{ sellerData.sellerId }}</span>
-            <span class="right">${{ item.price.toFixed(2) }}</span>
+            <span class="right">${{ Number(item?.price || 0).toFixed(2) }}</span>
           </div>
         </div>
       </div>
+    </div>
+
+    <div id="debugData" class="noPrint hide">
+      <h3>Debug Data:</h3>
+      <pre>{{ sellerData }}</pre>
     </div>
   </div>
   <script type="text/javascript" src="./js/app.js"></script>
