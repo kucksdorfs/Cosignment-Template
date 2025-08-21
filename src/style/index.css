@@ -20,6 +20,12 @@ th,
 td {
     border: 1px solid #ccc;
     padding: 6px;
+    vertical-align: top;
+}
+
+footer {
+    font-size: 8pt;
+    text-align: center;
 }
 
 input,
@@ -29,13 +35,22 @@ select {
     transition: none;
 }
 
+th label {
+    display: block;
+    font-size: 0.8em;
+    color: #555;
+    margin-top: 0.25em;
+}
+
 button {
     margin: 5px 5px 5px 0;
 }
 
 .hide {
-    display: none;;
+    display: none;
+    ;
 }
+
 
 .controls {
     display: flex;
@@ -65,6 +80,7 @@ button {
     height: 5in;
     margin: 0.1in;
 }
+
 .label-line {
     width: 2.3in;
     width: 2.3in;
@@ -81,7 +97,7 @@ button {
     text-align: center;
 }
 
-.label-header > img {
+.label-header>img {
     max-width: 100%;
     max-height: 100%;
 }
@@ -123,7 +139,7 @@ button {
 
 .item-desc {
     font-size: 1rem;
-    height:2in;
+    height: 2in;
     min-height: 1.5rem;
     word-wrap: break-word;
     overflow: hidden;
@@ -137,13 +153,13 @@ button {
 }
 
 .barcode {
-    display:flex;
+    display: flex;
     flex-direction: column;
     text-align: center;
 }
 
 .price-seller {
-    font-size:8pt;
+    font-size: 8pt;
     font-weight: bold;
     overflow: hidden;
     margin-top: 0.3rem;
@@ -155,12 +171,23 @@ button {
 }
 
 @keyframes highlight-hold-fade {
-  0%, 60% { background-color: rgba(255,0,0,0.5); } /* first 3s red */
-  100% { background-color: white; } /* fade to white over remaining 2s */
+
+    0%,
+    60% {
+        background-color: rgba(255, 0, 0, 0.5);
+    }
+
+    /* first 3s red */
+    100% {
+        background-color: white;
+    }
+
+    /* fade to white over remaining 2s */
 }
 
 .invalid-highlight {
-  animation: highlight-hold-fade 5s forwards; /* total 5s = 3s hold + 2s fade */
+    animation: highlight-hold-fade 5s forwards;
+    /* total 5s = 3s hold + 2s fade */
 }
 
 /* Web view 3 per row */

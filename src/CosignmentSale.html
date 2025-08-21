@@ -26,24 +26,26 @@
                 placeholder="Enter Seller ID" /></label>
           </div>
           <div>
-            <label>Default Donation: <input type="checkbox" v-model="sellerData.defaultDonation" /></label>
+
           </div>
           <div>
-            <label>Default Gender:
-              <select v-model="sellerData.defaultGender">
-                <option value="unmarked"> - </option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-            </label>
           </div>
         </div>
 
         <table>
           <thead>
             <tr>
-              <th>Donation</th>
-              <th>Gender</th>
+              <th>Donation<br />
+                <label>Default Donation: <input type="checkbox" v-model="sellerData.defaultDonation" /></label>
+              </th>
+              <th>Gender<br /><label>Default Gender:
+                  <select v-model="sellerData.defaultGender">
+                    <option value="unmarked"> - </option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </label>
+              </th>
               <th>Description</th>
               <th>Size</th>
               <th>Price (≥ 2)</th>
