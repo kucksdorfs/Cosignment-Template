@@ -21,17 +21,15 @@
       <div id="edit-data">
         <h1>Seller Table</h1>
         <div class="controls">
-          <div>
-            <label>Seller ID: <input id="txtSellerId" v-model="sellerData.sellerId"
-                placeholder="Enter Seller ID" /></label>
-          </div>
-          <div>
-
-          </div>
-          <div>
-          </div>
+          <label>Seller ID:
+            <input id="txtSellerId" v-model="sellerData.sellerId" placeholder="Enter Seller ID" />
+          </label>
+          <button @click="addItem">Add Item</button>
+          <button @click="clearAllItems">Clear All Items</button>
+          <button @click="exportAsJSON">⬇ Download tag file</button>
+          <input id="fileInput" type="file" @change="importFromJSON" style="display:none;" />
+          <button onclick="document.getElementById('fileInput').click()">⬆ Import tag file</button>
         </div>
-
         <table>
           <thead>
             <tr>
@@ -76,12 +74,6 @@
             </tr>
           </tbody>
         </table>
-
-        <div style="margin-top: 1rem;">
-          <button @click="addItem">Add Item</button>
-          <button @click="exportAsJSON">⬇ Download tag file</button>
-          <input type="file" @change="importFromJSON" />
-        </div>
       </div>
 
       <h2>Label Preview</h2>
