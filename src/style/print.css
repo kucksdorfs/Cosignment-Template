@@ -1,14 +1,51 @@
 @media print {
-.noPrint {
-    display: none;
-}
-    /* h2,
-    #edit-data,
-    button {
-        display: none;
-    } */
+    .noPrint {
+        display: none !important;
+    }
+
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+
+    #app {
+        margin-top: 0 !important;
+    }
+
+    .print-page {
+        width: 8.5in;
+        height: 11in;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        page-break-after: always;
+    }
+
+    .label-sheet {
+        width: 8.5in;
+        height: 11in;
+        margin: 0;
+    }
+
+    .label {
+        box-sizing: border-box;
+    }
 
     .label:nth-of-type(6n) {
         page-break-after: always;
     }
+
+    .label-sheet:not(:first-of-type) {
+        margin-top: -0.25in;
+        /* adjust value until alignment matches */
+    }
+
+}
+
+@page {
+  size: letter;
+  /*margin-top: 1.5in; /* or 1in for a full-inch margin */
 }
