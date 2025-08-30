@@ -35,7 +35,7 @@ select {
     transition: none;
 }
 
-th label {
+th label:not(.SkipStyling) {
     display: block;
     font-size: 0.8em;
     color: #555;

@@ -7,10 +7,8 @@
     document.addEventListener('keydown', (e) => {
         // Check for Ctrl+P (Windows/Linux) or Cmd+P (Mac)
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
-            e.preventDefault();  // stop the default print dialog
+            e.preventDefault();
             instance.print();
-            //alert("Custom print handler here!");
-            // You can call your own print function, e.g., window.print() or something custom
         }
     });
 
@@ -22,12 +20,23 @@
             const sellerData = reactive({
                 sellerId: '',
                 defaultDonation: false,
+                selectAll: false,
                 defaultGender: 'unmarked',
                 items: []
             });
 
+            function toggleSelectAll() {
+                sellerData.items.forEach(item => {
+                    item.selected = sellerData.selectAll;
+                });
+            }
+            function checkAllToggled(index) {
+                sellerData.selectAll = sellerData.items.every((e) => e.selected);
+            }
+
             function addItem() {
                 sellerData.items.push({
+                    selected: false,
                     donation: sellerData.defaultDonation,
                     gender: sellerData.defaultGender,
                     itemDescription: '',
@@ -39,6 +48,9 @@
             function removeItem(index) {
                 if (confirm(`This will remove "${sellerData.items[index].itemDescription}" from the list. This action cannot be undone. Continue?`)) {
                     sellerData.items.splice(index, 1);
+                }
+                if (sellerData.items.length === 0) {
+                    addItem();
                 }
             }
 
@@ -125,7 +137,7 @@
                         Object.assign(sellerData, imported);
                         if (!sellerData.items.length) addItem();
                     } catch (err) {
-                          alert(`Import failed: The JSON file is invalid.\n\nError: ${err.message}`);
+                        alert(`Import failed: The JSON file is invalid.\n\nError: ${err.message}`);
                     }
                 };
                 reader.readAsText(file);
@@ -162,16 +174,22 @@
 
                         Object.assign(sellerData, parsed);
 
-                        if (!sellerData.items.length) addItem();
+                        if (!sellerData.items.length) {
+                            addItem();
+                        }
                     } catch {
                         addItem();
                     }
                 } else addItem();
             });
 
-            watch(() => sellerData, saveToLocalStorage, { deep: true });
+            watch(() => sellerData,
+                (newVals) => {
+                    sellerData.selectAll = newVals.length > 0 && newVals.every(val => val);
+                }, saveToLocalStorage,
+                { deep: true });
 
-            return { sellerData, addItem, removeItem, clearAllItems, print, validatePrice, exportAsJSON, importFromJSON, drawBarcode };
+            return { sellerData, addItem, removeItem, clearAllItems, print, validatePrice, exportAsJSON, importFromJSON, drawBarcode, toggleSelectAll, checkAllToggled };
         }
     }).mount('#app');
 })(window.sk = window.sk || {});

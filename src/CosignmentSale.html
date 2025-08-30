@@ -18,113 +18,118 @@
   </div>
   <div id="app">
     <div class="noPrint">
-        <a style="position: fixed; right: 0px; top: 0px;" href="https://github.com/kucksdorfs"><img loading="lazy"
-            decoding="async" width="149" height="149"
-            src="https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png"
-            class="attachment-full size-full" alt="Fork me on GitHub"></a>
-        <div id="edit-data">
-          <h1>Seller Table</h1>
-          <div class="controls">
-            <label>Seller ID:
-              <input id="txtSellerId" v-model="sellerData.sellerId" placeholder="Enter Seller ID" />
-            </label>
-            <button @click="addItem">Add Item</button>
-            <button @click="clearAllItems">Clear All Items</button>
-            <button @click="exportAsJSON">⬇ Download tag file</button>
-            <input id="fileInput" type="file" @change="importFromJSON" style="display:none;" />
-            <button onclick="document.getElementById('fileInput').click()">⬆ Import tag file</button>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Donate?<br />
-                  <label>Default Donation: <input title="Check to donate if the item doesn't sell." type="checkbox"
-                      v-model="sellerData.defaultDonation" /></label>
-                </th>
-                <th>Gender<br /><label>Default Gender:
-                    <select v-model="sellerData.defaultGender">
-                      <option value="unmarked"> - </option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                    </select>
-                  </label>
-                </th>
-                <th>Description</th>
-                <th>Size</th>
-                <th>Price (≥ 2)</th>
-                <th>Remove<br />
-                  <button @click="clearAllItems">Clear</button>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, index) in sellerData.items" :key="index">
-                <td><input title="Check to donate if the item doesn't sell." type="checkbox" v-model="item.donation" />
-                </td>
-                <td>
-                  <select v-model="item.gender">
+      <a style="position: fixed; right: 0px; top: 0px;" href="https://github.com/kucksdorfs"><img loading="lazy"
+          decoding="async" width="149" height="149"
+          src="https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png"
+          class="attachment-full size-full" alt="Fork me on GitHub"></a>
+      <div id="edit-data">
+        <h1>Seller Table</h1>
+        <div class="controls">
+          <label>Seller ID:
+            <input id="txtSellerId" v-model="sellerData.sellerId" placeholder="Enter Seller ID" />
+          </label>
+          <button @click="addItem">Add Item</button>
+          <button @click="clearAllItems">Clear All Items</button>
+          <button @click="exportAsJSON">⬇ Download tag file</button>
+          <input id="fileInput" type="file" @change="importFromJSON" style="display:none;" />
+          <button onclick="document.getElementById('fileInput').click()">⬆ Import tag file</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th><label class="SkipStyling">Select
+                  <input v-model="sellerData.selectAll" @change="toggleSelectAll" type="checkbox" />
+                </label>
+              </th>
+              <th>Donate?<br />
+                <label>Default Donation: <input title="Check to donate if the item doesn't sell." type="checkbox"
+                    v-model="sellerData.defaultDonation" /></label>
+              </th>
+              <th>Gender<br /><label>Default Gender:
+                  <select v-model="sellerData.defaultGender">
                     <option value="unmarked"> - </option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                   </select>
-                </td>
-                <td><input v-model="item.itemDescription" /></td>
-                <td><input v-model="item.size" /></td>
-                <td>
-                  <input type="number" v-model.number="item.price" min="2" @change="validatePrice(item)"
-                    :class="{ 'invalid-highlight': item.highlight }" />
-                </td>
-                <td><button @click="removeItem(index)">Remove</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h2>Label Preview</h2>
-        <button @click="print">🖨️ Print</button>
-      </div>
-      <div class="label-sheet">
-        <div class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
-          <div class="label-line label-header">
-            <img src="./images/header-logo.png" />
-          </div>
-          <div class="label-line line">
-            <span style="width: 33%; border-right: 2px dotted lightgrey;">
-              <span :class="!item.donation ? 'crossed' : ''">D</span>
-            </span>
-            <span style="width: 65%;">
-              <span :class="item.gender==='male'?'circled':''">B</span>
-              <span> / </span>
-              <span :class="item.gender==='female'?'circled':''">G</span>
-            </span>
-          </div>
-          <div class="label-line item-desc">
-            <div style="text-align: right; font-size: 24pt; font-style: italic;">Item</div>{{ item.itemDescription }}
-          </div>
-          <div class="label-line size">{{ item.size }}<span style="font-style: italic;">&nbsp;Size</span></div>
-          <div class="label-line barcode">
-            <div style="font-size: 8pt;">MyWebsite.com</div>
-            <div>
-              <canvas :ref="el=>drawBarcode(el,item)"></canvas>
-            </div>
-            <div class="price-seller">
-              <span class="left">{{ sellerData.sellerId }}</span>
-              <span class="right">${{ Number(item?.price || 0).toFixed(2) }}</span>
-            </div>
-          </div>
-        </div>
+                </label>
+              </th>
+              <th>Description</th>
+              <th>Size</th>
+              <th>Price (≥ 2)</th>
+              <th>Remove<br />
+                <button @click="clearAllItems">Clear</button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in sellerData.items" :key="index">
+              <td><input title="Select tag" type="checkbox" v-model="item.selected" @change="checkAllToggled(index)" />
+              <td><input title="Check to donate if the item doesn't sell." type="checkbox" v-model="item.donation" />
+              </td>
+              <td>
+                <select v-model="item.gender">
+                  <option value="unmarked"> - </option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </td>
+              <td><input v-model="item.itemDescription" /></td>
+              <td><input v-model="item.size" /></td>
+              <td>
+                <input type="number" v-model.number="item.price" min="2" @change="validatePrice(item)"
+                  :class="{ 'invalid-highlight': item.highlight }" />
+              </td>
+              <td><button @click="removeItem(index)">Remove</button></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div id="debugData" class="noPrint hide">
-        <h3>Debug Data:</h3>
-        <pre>{{ sellerData }}</pre>
+      <h2>Label Preview</h2>
+      <button @click="print">🖨️ Print</button>
+    </div>
+    <div class="label-sheet">
+      <div class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
+        <div class="label-line label-header">
+          <img src="./images/header-logo.png" />
+        </div>
+        <div class="label-line line">
+          <span style="width: 33%; border-right: 2px dotted lightgrey;">
+            <span :class="!item.donation ? 'crossed' : ''">D</span>
+          </span>
+          <span style="width: 65%;">
+            <span :class="item.gender==='male'?'circled':''">B</span>
+            <span> / </span>
+            <span :class="item.gender==='female'?'circled':''">G</span>
+          </span>
+        </div>
+        <div class="label-line item-desc">
+          <div style="text-align: right; font-size: 24pt; font-style: italic;">Item</div>{{ item.itemDescription }}
+        </div>
+        <div class="label-line size">{{ item.size }}<span style="font-style: italic;">&nbsp;Size</span></div>
+        <div class="label-line barcode">
+          <div style="font-size: 8pt;">MyWebsite.com</div>
+          <div>
+            <canvas :ref="el=>drawBarcode(el,item)"></canvas>
+          </div>
+          <div class="price-seller">
+            <span class="left">{{ sellerData.sellerId }}</span>
+            <span class="right">${{ Number(item?.price || 0).toFixed(2) }}</span>
+          </div>
+        </div>
       </div>
     </div>
-    <script type="text/javascript" src="./js/app.js"></script>
-    <footer class="noPrint">
-      &copy; 2025 Kucksdorfs. Licensed under the
-      <a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank">BSD 3-Clause License</a>.
-    </footer>
+
+    <div id="debugData" class="noPrint hide">
+      <h3>Debug Data:</h3>
+      <pre>{{ sellerData }}</pre>
+    </div>
+  </div>
+  <script type="text/javascript" src="./js/app.js"></script>
+  <footer class="noPrint">
+    &copy; 2025 Kucksdorfs. Licensed under the
+    <a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank">BSD 3-Clause License</a>.
+  </footer>
 
 </body>
 
