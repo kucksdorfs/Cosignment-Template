@@ -16,15 +16,6 @@
         margin-top: 0 !important;
     }
 
-    .print-page {
-        width: 8.5in;
-        height: 11in;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        page-break-after: always;
-    }
-
     .label-sheet {
         width: 8.5in;
         height: 11in;
@@ -34,8 +25,9 @@
     .label {
         box-sizing: border-box;
     }
+
     .label:not(.selected) {
-        display:none;
+        display: none;
     }
 
     .label:nth-of-type(6n) {
@@ -44,12 +36,22 @@
 
     .label-sheet:not(:first-of-type) {
         margin-top: -0.25in;
-        /* adjust value until alignment matches */
+    }
+
+    .printOnly {
+        margin-top: 20px;
+        display: block;
+        visibility: visible;
+    }
+
+    html,
+    body {
+        height: auto !important;
     }
 
 }
 
 @page {
-  size: letter;
-  /*margin-top: 1.5in; /* or 1in for a full-inch margin */
+    size: letter;
+    /*margin-top: 1.5in; /* or 1in for a full-inch margin */
 }

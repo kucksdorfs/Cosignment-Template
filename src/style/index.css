@@ -220,4 +220,9 @@ button {
     .label {
         width: calc((100% / 3) - 0.25in);
     }
+
+    .printOnly {
+        display: none;
+        visibility: hidden;
+    }
 }

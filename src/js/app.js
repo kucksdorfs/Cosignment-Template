@@ -62,11 +62,11 @@
                 return printSelected().then(() => {
                     sellerData.selectAll = false;
                     toggleSelectAll();
-                    
-                    selectedIndexes.forEach(function(e) {
-                        sellerData.items[e].selected = true;
 
+                    selectedIndexes.forEach(function (e) {
+                        sellerData.items[e].selected = true;
                     });
+                    checkAllToggled(0);
                 });
             }
 

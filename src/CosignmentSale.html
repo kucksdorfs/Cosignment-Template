@@ -99,7 +99,10 @@
       <button @click="printSelected">🖨️☑️ Print Selected</button>
     </div>
     <div class="label-sheet">
-      <div :class="item.selected ? 'selected' : ''" class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
+      <div v-if="sellerData.sellerId.length == 0" class="printOnly">
+        Please enter your seller ID.
+      </div>
+      <div :class="sellerData.sellerId.length > 0 && item.selected ? 'selected' : ''" class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
         <div class="label-line label-header">
           <img src="./images/header-logo.png" />
         </div>
