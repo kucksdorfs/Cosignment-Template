@@ -55,36 +55,55 @@
             }
 
             function print() {
+                var selectedIndexes = sellerData.items.map((val, i) => val.selected ? i : -1).filter(i => i !== -1);
                 sellerData.selectAll = true;
                 toggleSelectAll();
 
-                return printSelected();
+                return printSelected().then(() => {
+                    sellerData.selectAll = false;
+                    toggleSelectAll();
+                    
+                    selectedIndexes.forEach(function(e) {
+                        sellerData.items[e].selected = true;
+
+                    });
+                });
             }
 
             function printSelected() {
                 let sellerId = sellerData.sellerId,
-                    itemCount = sellerData.items.filter(item => item.selected).length;
+                    itemCount = sellerData.items.filter(item => item.selected).length,
+                    retPromise = new Promise((resolve, reject) => {
+                        if (!sellerId) {
+                            alert("Please enter a seller ID.");
+                            document.querySelector("#txtSellerId")?.focus();
+                            reject(new Error("Missing seller ID"));
+                            return;
+                        }
 
-                if (!sellerId) {
-                    alert("Please enter a seller ID.");
-                    document.querySelector("#txtSellerId")?.focus();
-                    return;
-                }
-
-                if (itemCount === 0) {
-                    alert("There are no tags to print.");
-                    return;
-                }
+                        if (itemCount === 0) {
+                            alert("There are no tags to print.");
+                            reject(new Error("No items selected"));
+                            return;
+                        }
 
 
-                if (confirm(`You are about to print ${itemCount} tag${itemCount === 1 ? "" : "s"} for seller ID ${sellerId}. Do you want to continue?`)) {
+                        if (confirm(`You are about to print ${itemCount} tag${itemCount === 1 ? "" : "s"} for seller ID ${sellerId}. Do you want to continue?`)) {
+                            try {
+                                setTimeout(() => {
+                                    window.print();
+                                    resolve();
+                                }, 0);
+                            }
+                            catch (e) {
+                                reject(err);
+                            }
+                        } else {
+                            resolve();
+                        }
+                    });
 
-                    setTimeout(() => {
-                        window.print();
-                        sellerData.selectAll = false;
-                        toggleSelectAll();
-                    }, 1);
-                }
+                return retPromise;
             }
 
             function validatePrice(item) {
