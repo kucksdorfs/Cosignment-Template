@@ -68,9 +68,12 @@
                     alert("There are no tags to print.");
                     return;
                 }
+                sellerData.selectAll = true;
 
                 if (confirm(`You are about to print ${itemCount} tag${itemCount === 1 ? "" : "s"} for seller ID ${sellerId}. Do you want to continue?`)) {
+
                     window.print();
+                    sellerData.selectAll = false;
                 }
             }
 
@@ -126,6 +129,23 @@
                 }
             }
 
+            function removeSelected() {
+                if (!sellerData.items.some(item => item.selected)) {
+                    alert("No items selected to remove.");
+                    return;
+                }
+
+                if (confirm(`This will remove all selected items. This action cannot be undone. Continue?`)) {
+                    for (let i = sellerData.items.length - 1; i >= 0; i--) {
+                        if (sellerData.items[i].selected) {
+                            sellerData.items.splice(i, 1);
+                        }
+                    }
+                    if (sellerData.items.length === 0) {
+                        addItem(); // keep at least one blank row
+                    }
+                }
+            }
 
             function importFromJSON(event) {
                 const file = event.target.files[0];
@@ -168,8 +188,12 @@
                         const parsed = JSON.parse(stored);
 
                         // Remove temporary highlight flags
+                        delete parsed.selectAll;
                         if (parsed.items && Array.isArray(parsed.items)) {
-                            parsed.items.forEach(item => delete item.highlight);
+                            parsed.items.forEach(item => {
+                                delete item.highlight
+                                delete item.selected;
+                            });
                         }
 
                         Object.assign(sellerData, parsed);
@@ -184,12 +208,10 @@
             });
 
             watch(() => sellerData,
-                (newVals) => {
-                    sellerData.selectAll = newVals.length > 0 && newVals.every(val => val);
-                }, saveToLocalStorage,
+                saveToLocalStorage,
                 { deep: true });
 
-            return { sellerData, addItem, removeItem, clearAllItems, print, validatePrice, exportAsJSON, importFromJSON, drawBarcode, toggleSelectAll, checkAllToggled };
+            return { sellerData, addItem, removeItem, clearAllItems, removeSelected, print, validatePrice, exportAsJSON, importFromJSON, drawBarcode, toggleSelectAll, checkAllToggled };
         }
     }).mount('#app');
 })(window.sk = window.sk || {});

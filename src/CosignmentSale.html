@@ -28,11 +28,21 @@
           <label>Seller ID:
             <input id="txtSellerId" v-model="sellerData.sellerId" placeholder="Enter Seller ID" />
           </label>
-          <button @click="addItem">Add Item</button>
-          <button @click="clearAllItems">Clear All Items</button>
-          <button @click="exportAsJSON">⬇ Download tag file</button>
-          <input id="fileInput" type="file" @change="importFromJSON" style="display:none;" />
-          <button onclick="document.getElementById('fileInput').click()">⬆ Import tag file</button>
+        </div>
+        <div class="controls">
+          <div>
+            <span style="float:left;">
+              <button @click="addItem">Add Item</button>
+              <button @click="clearAllItems">Clear All Items</button>
+              <button @click="exportAsJSON">⬇ Download tag file</button>
+              <input id="fileInput" type="file" @change="importFromJSON" style="display:none;" />
+              <button onclick="document.getElementById('fileInput').click()">⬆ Import tag file</button>
+            </span>
+            <span style="float:right;">
+              <button @click="removeSelected">Remove Selected</button>
+              <button @click="clearAllItems">Remove All</button>
+            </span>
+          </div>
         </div>
         <table>
           <thead>
@@ -57,7 +67,6 @@
               <th>Size</th>
               <th>Price (≥ 2)</th>
               <th>Remove<br />
-                <button @click="clearAllItems">Clear</button>
               </th>
             </tr>
           </thead>
