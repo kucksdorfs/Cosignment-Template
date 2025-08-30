@@ -37,7 +37,9 @@
             }
 
             function removeItem(index) {
-                sellerData.items.splice(index, 1);
+                if (confirm(`This will remove "${sellerData.items[index].itemDescription}" from the list. This action cannot be undone. Continue?`)) {
+                    sellerData.items.splice(index, 1);
+                }
             }
 
             function print() {
@@ -45,17 +47,17 @@
                     itemCount = sellerData.items.length;
 
                 if (!sellerId) {
-                    alert("Please enter your seller id.");
+                    alert("Please enter a seller ID.");
                     document.querySelector("#txtSellerId")?.focus();
                     return;
                 }
 
                 if (itemCount === 0) {
-                    alert("You have no tags to print.");
+                    alert("There are no tags to print.");
                     return;
                 }
 
-                if (confirm(`You are about to print ${itemCount} tags for seller ID ${sellerId}. Do you want to continue?`)) {
+                if (confirm(`You are about to print ${itemCount} tag${itemCount === 1 ? "" : "s"} for seller ID ${sellerId}. Do you want to continue?`)) {
                     window.print();
                 }
             }
@@ -106,8 +108,10 @@
             }
 
             function clearAllItems() {
-                sellerData.items.splice(0, sellerData.items.length);
-                addItem(); // optional: add a new empty row
+                if (confirm(`This will remove all ${sellerData.items.length} items from the list. This action cannot be undone. Continue?`)) {
+                    sellerData.items.splice(0, sellerData.items.length);
+                    addItem(); // optional: add a new empty row
+                }
             }
 
 
@@ -121,7 +125,7 @@
                         Object.assign(sellerData, imported);
                         if (!sellerData.items.length) addItem();
                     } catch (err) {
-                        alert('Invalid JSON file');
+                          alert(`Import failed: The JSON file is invalid.\n\nError: ${err.message}`);
                     }
                 };
                 reader.readAsText(file);
