@@ -16,7 +16,7 @@
     let instance = createApp({
         setup: function () {
             const LOCAL_KEY = 'seller-data';
-            const MINIMUM_PRICE = 2;
+            const MAX_PRICE = 100000;
             const sellerData = reactive({
                 sellerId: '',
                 defaultDonation: false,
@@ -35,14 +35,16 @@
             }
 
             function addItem() {
-                sellerData.items.push({
+                var item = {
                     selected: false,
                     donation: sellerData.defaultDonation,
                     gender: sellerData.defaultGender,
                     itemDescription: '',
                     size: '',
-                    price: MINIMUM_PRICE
-                });
+                    price: 0
+                };
+
+                sellerData.items.push(attachItemMethods(item));
             }
 
             function removeItem(index) {
@@ -72,7 +74,7 @@
 
             function printSelected() {
                 let sellerId = sellerData.sellerId,
-                    itemCount = sellerData.items.filter(item => item.selected).length,
+                    itemCount = sellerData.items.filter(item => item.selected && item.isValid()).length,
                     retPromise = new Promise((resolve, reject) => {
                         if (!sellerId) {
                             alert("Please enter a seller ID.");
@@ -82,7 +84,7 @@
                         }
 
                         if (itemCount === 0) {
-                            alert("There are no tags to print.");
+                            alert("There are no valid tags to print.");
                             reject(new Error("No items selected"));
                             return;
                         }
@@ -110,8 +112,12 @@
                 let corrected = false;
                 let newPrice = Number(item.price);
 
-                if (isNaN(newPrice) || newPrice < MINIMUM_PRICE) {
-                    newPrice = MINIMUM_PRICE;
+                if (isNaN(newPrice) || newPrice < 0) {
+                    newPrice = 0;
+                    corrected = true;
+                }
+                if (newPrice > MAX_PRICE) {
+                    newPrice = MAX_PRICE;
                     corrected = true;
                 }
 
@@ -210,26 +216,32 @@
                 }
             }
 
+            function attachItemMethods(item) {
+                item.isValid = function () {
+                    const currentPrice = Number(this.price);
+                    return currentPrice > 0;
+                };
+                return item;
+            }
+
             onMounted(() => {
                 const stored = localStorage.getItem(LOCAL_KEY);
                 if (stored) {
                     try {
                         const parsed = JSON.parse(stored);
 
-                        // Remove temporary highlight flags
                         delete parsed.selectAll;
                         if (parsed.items && Array.isArray(parsed.items)) {
-                            parsed.items.forEach(item => {
-                                delete item.highlight
+                            parsed.items = parsed.items.map(item => {
+                                delete item.highlight;
                                 delete item.selected;
+                                return attachItemMethods(item);
                             });
                         }
 
                         Object.assign(sellerData, parsed);
 
-                        if (!sellerData.items.length) {
-                            addItem();
-                        }
+                        if (!sellerData.items.length) addItem();
                     } catch {
                         addItem();
                     }

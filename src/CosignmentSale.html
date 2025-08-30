@@ -71,7 +71,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in sellerData.items" :key="index">
+            <tr v-for="(item, index) in sellerData.items" :key="index" :class="item.price === 0 ? 'invalid' : '' " >
               <td><input title="Select tag" type="checkbox" v-model="item.selected" @change="checkAllToggled(index)" />
               <td><input title="Check to donate if the item doesn't sell." type="checkbox" v-model="item.donation" />
               </td>
@@ -102,7 +102,7 @@
       <div v-if="sellerData.sellerId.length == 0" class="printOnly">
         Please enter your seller ID.
       </div>
-      <div :class="sellerData.sellerId.length > 0 && item.selected ? 'selected' : ''" class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
+      <div :class="sellerData.sellerId.length > 0 && item.price > 0.0 && item.selected ? 'selected' : ''" class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
         <div class="label-line label-header">
           <img src="./images/header-logo.png" />
         </div>
