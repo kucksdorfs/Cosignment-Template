@@ -95,10 +95,11 @@
       </div>
 
       <h2>Label Preview</h2>
-      <button @click="print">🖨️ Print</button>
+      <button @click="print">🖨️ Print All</button>
+      <button @click="printSelected">🖨️☑️ Print Selected</button>
     </div>
     <div class="label-sheet">
-      <div class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
+      <div :class="item.selected ? 'selected' : ''" class="label" v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
         <div class="label-line label-header">
           <img src="./images/header-logo.png" />
         </div>

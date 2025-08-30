@@ -55,8 +55,15 @@
             }
 
             function print() {
+                sellerData.selectAll = true;
+                toggleSelectAll();
+
+                return printSelected();
+            }
+
+            function printSelected() {
                 let sellerId = sellerData.sellerId,
-                    itemCount = sellerData.items.length;
+                    itemCount = sellerData.items.filter(item => item.selected).length;
 
                 if (!sellerId) {
                     alert("Please enter a seller ID.");
@@ -68,12 +75,15 @@
                     alert("There are no tags to print.");
                     return;
                 }
-                sellerData.selectAll = true;
+
 
                 if (confirm(`You are about to print ${itemCount} tag${itemCount === 1 ? "" : "s"} for seller ID ${sellerId}. Do you want to continue?`)) {
 
-                    window.print();
-                    sellerData.selectAll = false;
+                    setTimeout(() => {
+                        window.print();
+                        sellerData.selectAll = false;
+                        toggleSelectAll();
+                    }, 1);
                 }
             }
 
@@ -211,7 +221,7 @@
                 saveToLocalStorage,
                 { deep: true });
 
-            return { sellerData, addItem, removeItem, clearAllItems, removeSelected, print, validatePrice, exportAsJSON, importFromJSON, drawBarcode, toggleSelectAll, checkAllToggled };
+            return { sellerData, addItem, removeItem, clearAllItems, removeSelected, print, printSelected, validatePrice, exportAsJSON, importFromJSON, drawBarcode, toggleSelectAll, checkAllToggled };
         }
     }).mount('#app');
 })(window.sk = window.sk || {});

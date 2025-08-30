@@ -3,6 +3,7 @@
         display: none !important;
     }
 
+
     html,
     body {
         height: 100%;
@@ -32,6 +33,9 @@
 
     .label {
         box-sizing: border-box;
+    }
+    .label:not(.selected) {
+        display:none;
     }
 
     .label:nth-of-type(6n) {
