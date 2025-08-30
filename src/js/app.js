@@ -20,6 +20,7 @@
             const sellerData = reactive({
                 sellerId: '',
                 defaultDonation: false,
+                defaultSize: "",
                 selectAll: false,
                 defaultGender: 'unmarked',
                 items: []
@@ -40,7 +41,7 @@
                     donation: sellerData.defaultDonation,
                     gender: sellerData.defaultGender,
                     itemDescription: '',
-                    size: '',
+                    size: sellerData.defaultSize,
                     price: 0
                 };
 
