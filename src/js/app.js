@@ -12,7 +12,6 @@
         }
     });
 
-
     let instance = createApp({
         setup: function () {
             const LOCAL_KEY = 'seller-data';
@@ -25,7 +24,7 @@
                 defaultGender: 'unmarked',
                 items: []
             });
-            
+
             const rowRefs = ref([]); // store references to first input of each row
 
             function toggleSelectAll() {
@@ -58,14 +57,14 @@
             }
 
             function formatDescription(text) {
-    if (!text) return '';
-    // Escape HTML first to prevent XSS, then replace newlines
-    const escaped = text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    return escaped.replace(/\n/g, "<br/>");
-}
+                if (!text) return '';
+                // Escape HTML first to prevent XSS, then replace newlines
+                const escaped = text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+                return escaped.replace(/\n/g, "<br/>");
+            }
 
 
             function removeItem(index) {
