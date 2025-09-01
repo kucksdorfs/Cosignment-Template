@@ -33,10 +33,10 @@
           <div>
             <span style="float:left;">
               <button @click="addItem">Add Item</button>
-              <button @click="clearAllItems">Clear All Items</button>
-              <button @click="exportAsJSON">⬇ Download tag file</button>
               <input id="fileInput" type="file" @change="importFromJSON" style="display:none;" />
-              <button onclick="document.getElementById('fileInput').click()">⬆ Import tag file</button>
+              <button class="debugData hide" @click="exportAsJSON">⬇ Download tag file</button>
+              <button class="debugData hide" onclick="document.getElementById('fileInput').click()">⬆ Import tag
+                file</button>
             </span>
             <span style="float:right;">
               <button @click="removeSelected">Remove Selected</button>
@@ -47,15 +47,15 @@
         <table>
           <thead>
             <tr>
-              <th><label class="SkipStyling">Select
+              <th style="width:40px;"><label class="SkipStyling">Select
                   <input v-model="sellerData.selectAll" @change="toggleSelectAll" type="checkbox" />
                 </label>
               </th>
-              <th>Donate?<br />
+              <th style="width:40px;">Donate?<br />
                 <label>Default Donation: <input title="Check to donate if the item doesn't sell." type="checkbox"
                     v-model="sellerData.defaultDonation" /></label>
               </th>
-              <th>Gender<br /><label>Default Gender:
+              <th style="width: 75px;">Gender<br /><label>Default Gender:
                   <select v-model="sellerData.defaultGender">
                     <option value="unmarked"> - </option>
                     <option value="male">Male</option>
@@ -64,18 +64,23 @@
                 </label>
               </th>
               <th>Description</th>
-              <th>Size<br>
+              <th style="width:40px;">Size<br>
                 <label>Default Donation: <input title="Check to donate if the item doesn't sell." type="textbox"
                     v-model="sellerData.defaultSize" /></label>
               </th>
-              <th>Price (≥ 2)</th>
-              <th>Remove<br />
+              <th style="width:40px;">Price (≥ 2)</th>
+              <th style="width:40px;">
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in sellerData.items" :key="index" :class="item.price === 0 ? 'invalid' : '' ">
-              <td><input title="Select tag" type="checkbox" v-model="item.selected" @change="checkAllToggled(index)" />
+              <td style="text-align: center;">
+                <label style="white-space: nowrap; display: inline-flex; align-items: center; gap: 0.3rem;">
+                  {{ index + 1 }}
+                  <input title="Select tag" type="checkbox" v-model="item.selected" @change="checkAllToggled(index)" />
+                </label>
+              </td>
               <td><input title="Check to donate if the item doesn't sell." type="checkbox" v-model="item.donation" />
               </td>
               <td>
@@ -85,13 +90,17 @@
                   <option value="female">Female</option>
                 </select>
               </td>
-              <td><input v-model="item.itemDescription" /></td>
+              <td>
+                <textarea v-model="item.itemDescription" :ref="el => rowRefs[index] = el" rows="2"
+                  style="width: 100%; max-height: 105px; min-height: 105px; resize:none;"></textarea>
+              </td>
+
               <td><input v-model="item.size" /></td>
               <td>
                 <input type="number" v-model.number="item.price" min="2" @change="validatePrice(item)"
                   :class="{ 'invalid-highlight': item.highlight }" />
               </td>
-              <td><button @click="removeItem(index)">Remove</button></td>
+              <td><button @click="addItem">Add</button></td>
             </tr>
           </tbody>
         </table>
@@ -121,7 +130,8 @@
           </span>
         </div>
         <div class="label-line item-desc">
-          <div style="text-align: right; font-size: 24pt; font-style: italic;">Item</div>{{ item.itemDescription }}
+          <div style="text-align: right; font-size: 24pt; font-style: italic;">Item</div>
+          <div v-html="formatDescription(item.itemDescription)"></div>
         </div>
         <div class="label-line size">{{ item.size }}<span style="font-style: italic;">&nbsp;Size</span></div>
         <div class="label-line barcode">

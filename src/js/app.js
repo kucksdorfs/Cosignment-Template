@@ -1,7 +1,7 @@
 (function (sk) {
-    const { createApp, reactive, onMounted, watch } = Vue;
+    const { ref, createApp, reactive, onMounted, watch, nextTick } = Vue;
     sk.toggleDebug = function () {
-        document.querySelector("#debugData").classList.toggle("hide");
+        document.querySelector(".debugData").classList.toggle("hide");
     }
 
     document.addEventListener('keydown', (e) => {
@@ -25,6 +25,8 @@
                 defaultGender: 'unmarked',
                 items: []
             });
+            
+            const rowRefs = ref([]); // store references to first input of each row
 
             function toggleSelectAll() {
                 sellerData.items.forEach(item => {
@@ -46,7 +48,25 @@
                 };
 
                 sellerData.items.push(attachItemMethods(item));
+                nextTick(() => {
+                    const last = rowRefs.value[rowRefs.value.length - 1];
+                    if (last) {
+                        last.focus();
+                    }
+                });
+
             }
+
+            function formatDescription(text) {
+    if (!text) return '';
+    // Escape HTML first to prevent XSS, then replace newlines
+    const escaped = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    return escaped.replace(/\n/g, "<br/>");
+}
+
 
             function removeItem(index) {
                 if (confirm(`This will remove "${sellerData.items[index].itemDescription}" from the list. This action cannot be undone. Continue?`)) {
@@ -253,7 +273,7 @@
                 saveToLocalStorage,
                 { deep: true });
 
-            return { sellerData, addItem, removeItem, clearAllItems, removeSelected, print, printSelected, validatePrice, exportAsJSON, importFromJSON, drawBarcode, toggleSelectAll, checkAllToggled };
+            return { sellerData, addItem, removeItem, clearAllItems, removeSelected, print, printSelected, validatePrice, exportAsJSON, importFromJSON, drawBarcode, toggleSelectAll, checkAllToggled, rowRefs, formatDescription };
         }
     }).mount('#app');
 })(window.sk = window.sk || {});
