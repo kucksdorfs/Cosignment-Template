@@ -65,8 +65,7 @@
               </th>
               <th>Description</th>
               <th style="width:40px;">Size<br>
-                <label>Default Donation: <input title="Check to donate if the item doesn't sell." type="textbox"
-                    v-model="sellerData.defaultSize" /></label>
+                <label>Default Donation: <input title="Check to donate if the item doesn't sell." type="textbox" v-model="sellerData.defaultSize" /></label>
               </th>
               <th style="width:40px;">Price (≥ 2)</th>
               <th style="width:40px;">
@@ -100,7 +99,7 @@
                 <input type="number" v-model.number="item.price" min="2" @change="validatePrice(item)"
                   :class="{ 'invalid-highlight': item.highlight }" />
               </td>
-              <td><button @click="addItem">Add</button></td>
+              <td><button style="margin-top:0px;" @click="addItem">Add</button></td>
             </tr>
           </tbody>
         </table>
