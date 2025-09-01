@@ -1,7 +1,7 @@
 (function (sk) {
     const { ref, createApp, reactive, onMounted, watch, nextTick } = Vue;
     sk.toggleDebug = function () {
-        document.querySelector(".debugData").classList.toggle("hide");
+        document.querySelectorAll(".debugData").forEach(e => e.classList.toggle("hide"));
     }
 
     document.addEventListener('keydown', (e) => {
