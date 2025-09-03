@@ -117,7 +117,7 @@
       <div :class="sellerData.sellerId.length > 0 && item.price > 0.0 && item.selected ? 'selected' : ''" class="label"
         v-for="(item, idx) in sellerData.items" :key="'label-'+idx">
         <div class="label-line label-header">
-          <img src="./images/header-logo.png" />
+          <img src="./images/half_pint_logo_horz.jpg" />
         </div>
         <div class="label-line line">
           <span style="width: 33%; border-right: 2px dotted lightgrey;">
@@ -135,7 +135,7 @@
         </div>
         <div class="label-line size">{{ item.size }}<span style="font-style: italic;">&nbsp;Size</span></div>
         <div class="label-line barcode">
-          <div style="font-size: 8pt;">MyWebsite.com</div>
+          <div style="font-size: 8pt;">halfpintresale.com</div>
           <div>
             <canvas :ref="el=>drawBarcode(el,item)"></canvas>
           </div>
