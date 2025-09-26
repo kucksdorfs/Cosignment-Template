@@ -6,6 +6,7 @@
   <title>Sale Tag Generator</title>
   <script src="./js/vue.global.prod.js"></script>
   <script src="./js/bwip-js-min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style/index.css" />
   <link rel="stylesheet" href="./style/print.css" />
   <link rel="stylesheet" href="./style/index.css" />
@@ -23,7 +24,7 @@
           src="https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png"
           class="attachment-full size-full" alt="Fork me on GitHub"></a>
       <div id="edit-data">
-        <h1>Seller Table</h1>
+        <h1 style="text-align: center;">Seller Table</h1>
         <div class="controls">
           <label>Seller ID:
             <input id="txtSellerId" v-model="sellerData.sellerId" placeholder="Enter Seller ID" />
@@ -65,10 +66,12 @@
               </th>
               <th>Description</th>
               <th style="width:40px;">Size<br>
-                <label>Default Size: <input title="Check to donate if the item doesn't sell." type="textbox"
+                <label>Default Size: <input placeholder="Size" title="Check to donate if the item doesn't sell." type="textbox"
                     v-model="sellerData.defaultSize" /></label>
               </th>
-              <th style="width:40px;">Price (≥ 2)</th>
+              <th style="width:40px;">Price 
+                <label>(≥ 2)</label>
+              </th>
               <th style="width:40px;">
               </th>
             </tr>
@@ -91,11 +94,11 @@
                 </select>
               </td>
               <td>
-                <textarea v-model="item.itemDescription" :ref="el => rowRefs[index] = el" rows="2"
-                  style="width: 100%; max-height: 105px; min-height: 105px; resize:none;"></textarea>
+                <textarea v-model="item.itemDescription" :ref="el => rowRefs[index] = el" rows="2" placeholder="Enter description here.."
+                  style="width: 99%; max-height: 105px; min-height: 105px; resize:none; border:none;"></textarea>
               </td>
 
-              <td><input v-model="item.size" /></td>
+              <td><input v-model="item.size" placeholder="Size" /></td>
               <td>
                 <input type="number" v-model.number="item.price" min="2" @change="validatePrice(item)"
                   :class="{ 'invalid-highlight': item.highlight }" />
