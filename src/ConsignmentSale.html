@@ -93,9 +93,9 @@
                   <option value="female">Female</option>
                 </select>
               </td>
-              <td>
+              <td style="width: 50%;">
                 <textarea v-model="item.itemDescription" :ref="el => rowRefs[index] = el" rows="2" placeholder="Enter description here.."
-                  style="width: 99%; max-height: 105px; min-height: 105px; resize:none; border:none;"></textarea>
+                  style="width: 99%; max-height: 105px; min-height: 105px; resize:none; background-color: transparent;"></textarea>
               </td>
 
               <td><input v-model="item.size" placeholder="Size" /></td>
