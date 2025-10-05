@@ -6,7 +6,7 @@ body {
 }
 
 .label-sheet, .label-sheet * {
-    font-family: 'Times New Roman', Times, serif !important;
+    font-family: sans-serif !important;
 }
 
 h1,
