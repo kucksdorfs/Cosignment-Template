@@ -25,7 +25,7 @@
                 items: []
             });
 
-            const rowRefs = ref([]); // store references to first input of each row
+            const rowRefs = ref([]); // Vue 3 array template ref for textareas
 
             function toggleSelectAll() {
                 sellerData.items.forEach(item => {
@@ -48,10 +48,9 @@
 
                 sellerData.items.push(attachItemMethods(item));
                 nextTick(() => {
+                    // Vue fills rowRefs array in v-for order automatically
                     const last = rowRefs.value[rowRefs.value.length - 1];
-                    if (last) {
-                        last.focus();
-                    }
+                    last?.focus?.();
                 });
 
             }
@@ -118,7 +117,7 @@
                                 }, 0);
                             }
                             catch (e) {
-                                reject(err);
+                                reject(e);
                             }
                         } else {
                             resolve();
@@ -180,7 +179,10 @@
             function clearAllItems() {
                 if (confirm(`This will remove all ${sellerData.items.length} items from the list. This action cannot be undone. Continue?`)) {
                     sellerData.items.splice(0, sellerData.items.length);
-                    addItem(); // optional: add a new empty row
+                    // Reset selection state and refs to avoid stale nodes
+                    sellerData.selectAll = false;
+                    rowRefs.value = [];
+                    addItem(); // add a new empty row and focus description
                 }
             }
 
@@ -197,7 +199,9 @@
                         }
                     }
                     if (sellerData.items.length === 0) {
-                        addItem(); // keep at least one blank row
+                        sellerData.selectAll = false;
+                        rowRefs.value = [];
+                        addItem(); // keep at least one blank row and focus it
                     }
                 }
             }

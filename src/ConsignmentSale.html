@@ -91,7 +91,7 @@
                 </select>
               </td>
               <td>
-                <textarea v-model="item.itemDescription" :ref="el => rowRefs[index] = el" rows="2"
+                <textarea v-model="item.itemDescription" ref="rowRefs" rows="2"
                   style="width: 100%; max-height: 105px; min-height: 105px; resize:none;"></textarea>
               </td>
 
