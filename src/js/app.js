@@ -123,7 +123,6 @@
                             resolve();
                         }
                     });
-
                 return retPromise;
             }
 
@@ -191,7 +190,6 @@
                     alert("No items selected to remove.");
                     return;
                 }
-
                 if (confirm(`This will remove all selected items. This action cannot be undone. Continue?`)) {
                     for (let i = sellerData.items.length - 1; i >= 0; i--) {
                         if (sellerData.items[i].selected) {
