@@ -55,3 +55,26 @@
     size: letter;
     /*margin-top: 1.5in; /* or 1in for a full-inch margin */
 }
+
+/* When printing the grid only */
+@media print {
+    #edit-data.print-grid-only {
+        display: block !important;
+    }
+
+    #edit-data.print-grid-only ~ .label-sheet,
+    #edit-data.print-grid-only ~ h2,
+    #edit-data.print-grid-only ~ .debugData,
+    #edit-data.print-grid-only ~ footer,
+    #edit-data.print-grid-only ~ .noPrint,
+    .hide-for-grid-print {
+        display: none !important;
+    }
+
+    #edit-data.print-grid-only table {
+        page-break-inside: auto;
+    }
+
+    #edit-data.print-grid-only thead { display: table-header-group; }
+    #edit-data.print-grid-only tfoot { display: table-footer-group; }
+}

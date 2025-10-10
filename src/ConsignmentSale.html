@@ -37,12 +37,17 @@
               <button class="debugData hide" @click="exportAsJSON">⬇ Download tag file</button>
               <button class="debugData hide" onclick="document.getElementById('fileInput').click()">⬆ Import tag
                 file</button>
+              <button @click="printGrid">Print Grid</button>
+              <button @click="exportGridToCSV">Export CSV</button>
             </span>
             <span style="float:right;">
               <button @click="removeSelected">Remove Selected</button>
               <button @click="clearAllItems">Remove All</button>
             </span>
           </div>
+        </div>
+        <div class="printOnly" style="margin-top: 0;">
+          <strong>Seller ID:</strong> {{ sellerData.sellerId }}
         </div>
         <table>
           <thead>
@@ -103,6 +108,20 @@
               <td><button style="margin-top:0px;" @click="addItem">Add</button></td>
             </tr>
           </tbody>
+          <tfoot>
+            <tr class="totals-row">
+              <td style="text-align:center; font-weight: bold;">Total Qty: {{ totals.count }}</td>
+              <td colspan="4" style="text-align:right; font-weight: bold;">Totals (valid items)</td>
+              <td style="font-weight: bold;">${{ totals.amount.toFixed(2) }}</td>
+              <td></td>
+            </tr>
+            <tr class="totals-row">
+              <td style="text-align:center; font-weight: bold;">Total Qty (selected): {{ selectedTotals.count }}</td>
+              <td colspan="4" style="text-align:right; font-weight: bold;">Totals (selected items)</td>
+              <td style="font-weight: bold;">${{ selectedTotals.amount.toFixed(2) }}</td>
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
 

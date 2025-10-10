@@ -27,6 +27,18 @@
 
             const rowRefs = ref([]); // Vue 3 array template ref for textareas
 
+            const totals = Vue.computed(() => {
+                const valid = sellerData.items.filter(i => i.isValid && i.isValid());
+                const amount = valid.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+                return { count: valid.length, amount };
+            });
+
+            const selectedTotals = Vue.computed(() => {
+                const selected = sellerData.items.filter(i => i.selected && i.isValid && i.isValid());
+                const amount = selected.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+                return { count: selected.length, amount };
+            });
+
             function toggleSelectAll() {
                 sellerData.items.forEach(item => {
                     item.selected = sellerData.selectAll;
@@ -126,6 +138,31 @@
                 return retPromise;
             }
 
+            function printGrid() {
+                // Print only the edit grid (seller table) for records
+                const appEl = document.getElementById('edit-data');
+                if (!appEl) {
+                    window.print();
+                    return;
+                }
+                const printClass = 'print-grid-only';
+                const wrapper = appEl.closest('.noPrint');
+                const removedNoPrint = wrapper && wrapper.classList.contains('noPrint');
+                if (removedNoPrint) wrapper.classList.remove('noPrint');
+
+                appEl.classList.add(printClass);
+                const toHide = document.querySelectorAll('.label-sheet, h2, .debugData, footer');
+                toHide.forEach(e => e.classList.add('hide-for-grid-print'));
+
+                setTimeout(() => {
+                    window.print();
+                    // Cleanup after print
+                    appEl.classList.remove(printClass);
+                    toHide.forEach(e => e.classList.remove('hide-for-grid-print'));
+                    if (removedNoPrint) wrapper.classList.add('noPrint');
+                }, 0);
+            }
+
             function validatePrice(item) {
                 let corrected = false;
                 let newPrice = Number(item.price);
@@ -220,6 +257,47 @@
                 reader.readAsText(file);
             }
 
+            function exportGridToCSV() {
+                // Build CSV with headers matching the table
+                const headers = [
+                    'Index', 'Selected', 'Donate', 'Gender', 'Description', 'Size', 'Price'
+                ];
+                const rows = sellerData.items.map((item, idx) => [
+                    idx + 1,
+                    item.selected ? 'Yes' : 'No',
+                    item.donation ? 'Yes' : 'No',
+                    item.gender,
+                    (item.itemDescription || '').replace(/\r?\n/g, ' ').trim(),
+                    item.size || '',
+                    Number(item.price || 0)
+                ]);
+
+                const totalsRow = ['','', '', '', 'TOTAL (valid)', '', totals.value.amount.toFixed(2)];
+                const selectedTotalsRow = ['','', '', '', 'TOTAL (selected)', '', selectedTotals.value.amount.toFixed(2)];
+
+                const all = [headers, ...rows, totalsRow, selectedTotalsRow];
+                const csv = all
+                    .map(cols => cols.map(v => {
+                        const s = String(v ?? '');
+                        // Escape quotes; quote field if contains comma or quote
+                        const escaped = '"' + s.replace(/"/g, '""') + '"';
+                        return escaped;
+                    }).join(','))
+                    .join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const dt = new Date();
+                const ts = dt.toISOString().replace(/[:.]/g, '-');
+                a.download = `seller-grid-${sellerData.sellerId || 'unknown'}-${ts}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
             function drawBarcode(canvas, item) {
                 if (!canvas)
                     return;
@@ -274,7 +352,7 @@
                 saveToLocalStorage,
                 { deep: true });
 
-            return { sellerData, addItem, removeItem, clearAllItems, removeSelected, print, printSelected, validatePrice, exportAsJSON, importFromJSON, drawBarcode, toggleSelectAll, checkAllToggled, rowRefs, formatDescription };
+            return { sellerData, addItem, removeItem, clearAllItems, removeSelected, print, printSelected, printGrid, validatePrice, exportAsJSON, importFromJSON, drawBarcode, toggleSelectAll, checkAllToggled, rowRefs, formatDescription, totals, selectedTotals, exportGridToCSV };
         }
     }).mount('#app');
 })(window.sk = window.sk || {});

@@ -56,6 +56,29 @@ button {
     ;
 }
 
+.totals-row {
+    background-color: #f9f9f9;
+}
+
+/* Sticky totals summary at the bottom of the viewport */
+.sticky-totals {
+    /* No sticky positioning per request */
+    position: static;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-top: 1px solid #ccc;
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.5rem;
+}
+
+/* Try to keep tfoot visible when scrolling (browser support varies) */
+/* Footer should not stick while scrolling */
+table tfoot {
+    position: static;
+}
+
 
 .controls {
     display: flex;
