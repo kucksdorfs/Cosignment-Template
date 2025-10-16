@@ -14,9 +14,23 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
+    position: relative;
 }
 
-th,
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+th {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 6px;
+    vertical-align: top;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 td {
     border: 1px solid #ccc;
     padding: 6px;
